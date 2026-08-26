@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Letter Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .form-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .letter-section {
+            flex: 2;
+            min-width: 500px;
+            background: white;
+            padding: 40px 60px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.6;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        
+        /* Letter Formatting */
+        .company-header {
+            text-align: right;
+            margin-bottom: 30px;
+        }
+        .company-header h2 {
+            margin: 0;
+            color: #000;
+        }
+        .company-header p {
+            margin: 0;
+            font-style: italic;
+            font-size: 14px;
+        }
+        .letter-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            text-decoration: underline;
+            margin: 20px 0;
+        }
+        .letter-details {
+            margin-top: 20px;
+        }
+        .letter-details p {
+            margin: 5px 0;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            border-top: 2px solid #000;
+            padding-top: 10px;
+        }
+        
+        @media print {
+            body { background: white; padding: 0; }
+            .form-section { display: none; }
+            .letter-section { box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Input Form -->
+    <div class="form-section">
+        <h3>Letter Details</h3>
+        <div class="form-group">
+            <label>Letter Date:</label>
+            <input type="text" id="letterDate" placeholder="e.g., 30th July, 2026">
+        </div>
+        <div class="form-group">
+            <label>Intern Name:</label>
+            <input type="text" id="internName" placeholder="e.g., Abdul Ghani">
+        </div>
+        <div class="form-group">
+            <label>Department:</label>
+            <input type="text" id="department" placeholder="e.g., IT Department">
+        </div>
+        <div class="form-group">
+            <label>Position:</label>
+            <input type="text" id="position" placeholder="e.g., Intern">
+        </div>
+        <div class="form-group">
+            <label>Date of Joining:</label>
+            <input type="text" id="joiningDate" placeholder="e.g., 3rd August 2026">
+        </div>
+        <div class="form-group">
+            <label>Tenure:</label>
+            <input type="text" id="tenure" placeholder="e.g., 4 months">
+        </div>
+        <div class="form-group">
+            <label>Location:</label>
+            <input type="text" id="location" placeholder="e.g., Plot No 51, Sector-32...">
+        </div>
+        <div class="form-group">
+            <label>Reporting to:</label>
+            <input type="text" id="reportingTo" placeholder="e.g., Mr. Gurdeep">
+        </div>
+        <button onclick="generateLetter()">Generate Letter</button>
+        <button onclick="window.print()" style="background-color: #28a745;">Print / Save as PDF</button>
+    </div>
+
+    <!-- Letter Output -->
+    <div class="letter-section" id="letterOutput">
+        <!-- Letter content will be injected here -->
+    </div>
+
+    <script>
+        function generateLetter() {
+            // Fetch values from inputs
+            const letterDate = document.getElementById('letterDate').value || '[Letter Date]';
+            const internName = document.getElementById('internName').value || '[Intern Name]';
+            const department = document.getElementById('department').value || '[Department]';
+            const position = document.getElementById('position').value || '[Position]';
+            const joiningDate = document.getElementById('joiningDate').value || '[Date of Joining]';
+            const tenure = document.getElementById('tenure').value || '[Tenure]';
+            const location = document.getElementById('location').value || '[Location]';
+            const reportingTo = document.getElementById('reportingTo').value || '[Reporting to]';
+
+            // Build the letter HTML based on the provided sample
+            const letterHTML = `
+                <p>${letterDate}</p>
+                <p>Dear ${internName},</p>
+                
+                <div class="company-header">
+                    <h2>PEARL GLOBAL</h2>
+                    <p>Exceeding Expectations...Always</p>
+                </div>
+
+                <div class="letter-title">Letter of Internship</div>
+
+                <p>This is to certify that ${internName} will be undergoing an internship with Pearl Global Industries Ltd. with ${department}.</p>
+                <p>Internship program will commence from ${joiningDate}.</p>
+
+                <div class="letter-details">
+                    <p><strong>Position:</strong> ${position}</p>
+                    <p><strong>Date of Joining:</strong> ${joiningDate}</p>
+                    <p><strong>Tenure:</strong> ${tenure}</p>
+                    <p><strong>Location:</strong> ${location}</p>
+                    <p><strong>Reporting to:</strong> ${reportingTo}</p>
+                </div>
+
+                <br>
+                <p>For Pearl Global Industries Limited</p>
+                <br><br>
+                <p><strong>Sudhir Kumar</strong><br>AVP-HR</p>
+
+                <br><br>
+                <p>Accepted<br>${letterDate}</p>
+
+                <div class="footer">
+                    <strong>Pearl Global Industries Limited</strong><br>
+                    Regd. & Corp. Office: Pearl Tower, Plot No. 51, Sector-32, Gurugram-122001, Haryana (India)<br>
+                    Tel: +91-124-46510001 | E: info@pearlglobal.com<br>
+                    CIN: L74899HR1989PLC140150<br>
+                    www.pearlglobal.com
+                </div>
+            `;
+
+            document.getElementById('letterOutput').innerHTML = letterHTML;
+        }
+
+        // Initialize with default template on load
+        generateLetter();
+    </script>
+</body>
+</html>
