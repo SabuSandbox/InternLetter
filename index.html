@@ -3,151 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Internship Letter Generator</title>
+    <title>Pearl Global - Internship Letter Generator</title>
     
+    <!-- Required Libraries for Word Document Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
+
     <style>
-        /* --- FORM UI STYLES (Screen Only) --- */
-        @media screen {
-            body { 
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-                margin: 0;
-                background-color: #050505; 
-                background-image: radial-gradient(circle at 50% 50%, #110a1f 0%, #050505 100%);
-                color: #ffffff; 
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-                padding: 40px 20px;
-            }
-            .glow-wrapper {
-                position: relative; width: 100%; max-width: 800px; border-radius: 16px; z-index: 1;
-            }
-            .glow-wrapper::before {
-                content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
-                background: linear-gradient(135deg, #007bff 0%, #00d2ff 40%, transparent 80%);
-                border-radius: 18px; z-index: -1; filter: blur(8px); opacity: 0.8;
-            }
-            .card-content {
-                background: #0f0a18; border-radius: 16px; padding: 40px 50px;
-                border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-            }
-            .form-header { text-align: center; margin-bottom: 35px; }
-            .form-header h2 { font-size: 22px; font-weight: 500; margin-bottom: 8px; color: #fff; }
-            .form-header p { color: #aaa; font-size: 13px; margin: 0; } 
-            
-            .form-row { display: flex; gap: 20px; margin-bottom: 15px; }
-            .form-group { flex: 1; }
-            
-            label { display: block; font-weight: 400; margin-bottom: 8px; font-size: 12px; color: #ccc; } 
-            input[type="text"], input[type="date"] { 
-                width: 100%; padding: 12px 14px; background: rgba(255, 255, 255, 0.07); 
-                border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; 
-                box-sizing: border-box; font-size: 13px; color: #ffffff; outline: none; transition: all 0.2s ease;
-            }
-            input::placeholder { color: #888; } 
-            input:focus { border-color: #00d2ff; background: rgba(255, 255, 255, 0.1); }
-            input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.8; cursor: pointer;}
-            
-            button { 
-                border: none; padding: 14px; cursor: pointer; border-radius: 8px; 
-                font-weight: 500; font-size: 14px; transition: opacity 0.2s, transform 0.1s; width: 100%;
-            }
-            button:active { transform: scale(0.98); }
-            .btn-primary { background: #ffffff; color: #000000; margin-top: 15px; font-weight: 600; }
-            .btn-primary:hover { background: #e0e0e0; }
-            
-            #print-area { display: none; }
-            
-            @media (max-width: 600px) {
-                .form-row { flex-direction: column; gap: 15px; }
-                .card-content { padding: 30px 20px; }
-            }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0;
+            background-color: #050505; 
+            background-image: radial-gradient(circle at 50% 50%, #110a1f 0%, #050505 100%);
+            color: #ffffff; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
         }
-
-        /* --- LETTER STYLES (Print Only) --- */
-        @media print {
-            @page {
-                margin: 20mm; /* Standard letter margins */
-            }
-            body { 
-                background: white; 
-                color: black; 
-                font-family: Arial, sans-serif; 
-                margin: 0; 
-                padding: 0;
-            }
-            .glow-wrapper { display: none; }
-            
-            #print-area { 
-                display: block; 
-                width: 100%; 
-                font-size: 14px;
-                line-height: 1.6;
-            }
-            
-            .company-header {
-                text-align: right;
-                margin-bottom: 40px;
-            }
-            .company-header h2 {
-                margin: 0;
-                font-size: 24px;
-                color: #000;
-                font-family: 'Arial Black', sans-serif;
-            }
-            .company-header p {
-                margin: 0;
-                font-style: italic;
-                font-size: 12px;
-            }
-            
-            .letter-title {
-                text-align: center;
-                font-weight: bold;
-                font-size: 18px;
-                text-decoration: underline;
-                margin: 30px 0;
-            }
-            
-            .letter-details {
-                margin-top: 20px;
-                margin-bottom: 40px;
-            }
-            .letter-details p {
-                margin: 5px 0;
-            }
-            
-            .signatory-section {
-                margin-top: 50px;
-            }
-            
-            .accepted-section {
-                margin-top: 60px;
-            }
-
-            .footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                text-align: center;
-                font-size: 11px;
-                border-top: 2px solid #000;
-                padding-top: 10px;
-                padding-bottom: 20px;
-            }
+        .glow-wrapper {
+            position: relative; width: 100%; max-width: 800px; border-radius: 16px; z-index: 1;
+        }
+        .glow-wrapper::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1565c0 40%, transparent 80%); /* Pearl Global brand colors */
+            border-radius: 18px; z-index: -1; filter: blur(8px); opacity: 0.8;
+        }
+        .card-content {
+            background: #0f0a18; border-radius: 16px; padding: 40px 50px;
+            border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        .form-header { text-align: center; margin-bottom: 35px; }
+        .form-header h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; color: #fff; }
+        .form-header p { color: #aaa; font-size: 13px; margin: 0; } 
+        
+        .form-row { display: flex; gap: 20px; margin-bottom: 15px; }
+        .form-group { flex: 1; }
+        
+        label { display: block; font-weight: 400; margin-bottom: 8px; font-size: 12px; color: #ccc; } 
+        input[type="text"] { 
+            width: 100%; padding: 12px 14px; background: rgba(255, 255, 255, 0.07); 
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; 
+            box-sizing: border-box; font-size: 13px; color: #ffffff; outline: none; transition: all 0.2s ease;
+        }
+        input::placeholder { color: #888; } 
+        input:focus { border-color: #1565c0; background: rgba(255, 255, 255, 0.1); }
+        
+        button { 
+            border: none; padding: 14px; cursor: pointer; border-radius: 8px; 
+            font-weight: 500; font-size: 15px; transition: opacity 0.2s, transform 0.1s; width: 100%;
+        }
+        button:active { transform: scale(0.98); }
+        .btn-primary { background: #ffffff; color: #000000; margin-top: 20px; font-weight: 600; }
+        .btn-primary:hover { background: #e0e0e0; }
+        
+        @media (max-width: 600px) {
+            .form-row { flex-direction: column; gap: 15px; }
+            .card-content { padding: 30px 20px; }
         }
     </style>
 </head>
 <body>
 
-<!-- FORM SECTION -->
 <div class="glow-wrapper">
     <div class="card-content">
         <div class="form-header">
             <h2>Internship Letter Generator</h2>
-            <p>Enter details to instantly create and print the PDF letter.</p>
+            <p>Enter details below to generate the Word document automatically.</p>
         </div>
 
         <form id="letter-form">
@@ -195,94 +120,83 @@
                 </div>
             </div>
             
-            <button type="button" class="btn-primary" onclick="generatePDFLetter()">Generate & Print PDF</button>
+            <button type="button" class="btn-primary" onclick="generateWordDoc()">Download Word Document</button>
         </form>
     </div>
 </div>
 
-<!-- LETTER PRINT TEMPLATE SECTION -->
-<div id="print-area">
-    
-    <div class="company-header">
-        <h2>PEARL GLOBAL</h2>
-        <p>Exceeding Expectations...Always</p>
-    </div>
-
-    <p id="out-letter-date"></p>
-    
-    <p>Dear <span id="out-intern-name"></span>,</p>
-    
-    <div class="letter-title">Letter of Internship</div>
-    
-    <p>This is to certify that <span id="out-intern-name-2"></span> will be undergoing an internship with Pearl Global Industries Ltd. with <span id="out-department"></span>.</p>
-    <p>Internship program will commence from <span id="out-joining-date-inline"></span>.</p>
-
-    <div class="letter-details">
-        <p><strong>Position:</strong> <span id="out-position"></span></p>
-        <p><strong>Date of Joining:</strong> <span id="out-joining-date"></span></p>
-        <p><strong>Tenure:</strong> <span id="out-tenure"></span></p>
-        <p><strong>Location:</strong> <span id="out-location"></span></p>
-        <p><strong>Reporting to:</strong> <span id="out-reporting-to"></span></p>
-    </div>
-
-    <div class="signatory-section">
-        <p>For Pearl Global Industries Limited</p>
-        <br><br>
-        <p><strong>Sudhir Kumar</strong><br>AVP-HR</p>
-    </div>
-
-    <div class="accepted-section">
-        <p>Accepted<br><span id="out-accepted-date"></span></p>
-    </div>
-
-    <div class="footer">
-        <strong>Pearl Global Industries Limited</strong><br>
-        Regd. & Corp. Office: Pearl Tower, Plot No. 51, Sector-32, Gurugram-122001, Haryana (India)<br>
-        Tel: +91-124-46510001 E: info@pearlglobal.com<br>
-        CIN: L74899HR1989PLC140150<br>
-        www.pearlglobal.com
-    </div>
-</div>
-
 <script>
-    // Set today's date dynamically as a default helper
+    // Automatically set today's date on load
     document.addEventListener("DOMContentLoaded", () => {
         const today = new Date();
         const formattedDate = today.toLocaleDateString('en-GB', { 
             day: 'numeric', month: 'long', year: 'numeric' 
         });
-        document.getElementById('letterDate').value = formattedDate;
+        
+        // Add ordinal suffix (st, nd, rd, th) to the day
+        const day = today.getDate();
+        const suffix = (day % 10 === 1 && day !== 11) ? 'st' :
+                       (day % 10 === 2 && day !== 12) ? 'nd' :
+                       (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
+        
+        const month = today.toLocaleString('default', { month: 'long' });
+        const year = today.getFullYear();
+        
+        document.getElementById('letterDate').value = `${day}${suffix} ${month}, ${year}`;
     });
 
-    function generatePDFLetter() {
-        // Fetch values from the form
-        const letterDate = document.getElementById('letterDate').value || '[Letter Date]';
-        const internName = document.getElementById('internName').value || '[Intern Name]';
-        const department = document.getElementById('department').value || '[Department]';
-        const position = document.getElementById('position').value || '[Position]';
-        const joiningDate = document.getElementById('joiningDate').value || '[Date of Joining]';
-        const tenure = document.getElementById('tenure').value || '[Tenure]';
-        const location = document.getElementById('location').value || '[Location]';
-        const reportingTo = document.getElementById('reportingTo').value || '[Reporting to]';
+    // Helper function to load the local Word template
+    function loadFile(url, callback) {
+        PizZipUtils.getBinaryContent(url, callback);
+    }
 
-        // Map values to the hidden print template spans
-        document.getElementById('out-letter-date').textContent = letterDate;
-        document.getElementById('out-intern-name').textContent = internName;
-        document.getElementById('out-intern-name-2').textContent = internName;
-        document.getElementById('out-department').textContent = department;
-        document.getElementById('out-position').textContent = position;
-        
-        document.getElementById('out-joining-date-inline').textContent = joiningDate;
-        document.getElementById('out-joining-date').textContent = joiningDate;
-        
-        document.getElementById('out-tenure').textContent = tenure;
-        document.getElementById('out-location').textContent = location;
-        document.getElementById('out-reporting-to').textContent = reportingTo;
-        
-        document.getElementById('out-accepted-date').textContent = letterDate;
+    function generateWordDoc() {
+        // 1. Gather all data from the form matching the tags in your template
+        const templateData = {
+            letterDate: document.getElementById('letterDate').value,
+            internName: document.getElementById('internName').value,
+            department: document.getElementById('department').value,
+            position: document.getElementById('position').value,
+            joiningDate: document.getElementById('joiningDate').value,
+            tenure: document.getElementById('tenure').value,
+            location: document.getElementById('location').value,
+            reportingTo: document.getElementById('reportingTo').value
+        };
 
-        // Trigger the browser's print dialog (saves to PDF)
-        window.print();
+        // 2. Load the specific template file you referenced
+        loadFile("letter_template.docx", function(error, content) {
+            if (error) { 
+                alert("Error: Could not load 'letter_template.docx'. Make sure it is in the same folder and you are running this on a local web server (not just double-clicking the HTML file).");
+                throw error; 
+            }
+            
+            // 3. Unzip the content and initialize docxtemplater
+            var zip = new PizZip(content);
+            var doc = new window.docxtemplater(zip, { 
+                paragraphLoop: true, 
+                linebreaks: true 
+            });
+
+            // 4. Inject the data into the {tags}
+            try {
+                doc.render(templateData);
+            } catch (error) {
+                console.error("Error during rendering:", error);
+                alert("An error occurred mapping the data. Check your template tags.");
+                return;
+            }
+
+            // 5. Generate and download the filled document
+            var out = doc.getZip().generate({ 
+                type: "blob", 
+                mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
+            });
+            
+            // Format the downloaded file name dynamically based on intern name
+            const sanitizedName = templateData.internName.replace(/[^a-zA-Z0-9]/g, '_') || 'Intern';
+            const fileName = `Internship_Letter_${sanitizedName}.docx`;
+            saveAs(out, fileName);
+        });
     }
 </script>
 </body>
